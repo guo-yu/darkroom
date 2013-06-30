@@ -3,10 +3,10 @@ var wechat = require('wechat'),
     List = wechat.List;
 
 List.add('main',[
-    ['回复『开始』选择新的房间',function (info, req, res) {
-
+    ['回复{开始} :选择新的房间',function (info, req, res) {
+      // 进行一些分配操作
     }],
-    ['回复『帮助』查看游戏帮助',function (info, req , res) {
+    ['回复{帮助} :查看游戏帮助',function (info, req , res) {
       res.reply([
         '游戏帮助',
         '',
@@ -25,36 +25,48 @@ List.add('main',[
         'enjoy darkroom!'
         ].join('\n'))
     }],
-    ['回复『成就』查看我所获得的积分',function (info, req,res){
+    ['回复{成就} :查看我所获得的积分',function (info, req,res){
+      // 查询积分
       res.reply('你的积分是10000分');
+    }],
+    ['回复{在线} :查看游戏服务器在线人数',function (info, req,res){
+      // 查询积分
+      res.reply([
+          '服务器状态：正常',
+          '在线人数：10028262'
+        ].join('\n'));
+    }],
+    ['回复{反馈} :提交你对darkroom的想法',function (info, req,res){
+      // 查询积分
+      res.reply('我正拿着笔准备记下呢，请说：')
     }]
   ])
 /*
  * GET home page.
  */
 
-module.exports = wechat('keyboardcat123', function (req, res, next) {
-  var msg = req.weixin;
-    console.log(msg);
-    console.log(req.wxsession);
-  if (msg.MsgType == 'text') {
-    // 查询用户状态
-    user.query(msg.FromUserName,function(u){
-      if (u) {
-        // 此用户已经注册过一个了
-        res.reply('欢迎回来，系统正在为你分配一个新的darkroom');
-        // res.
-      } else {
-        // 开始新建用户
-        user.create({
-          FromUserName: msg.FromUserName
-        },function(babyID){
-          req.wxsession.uid = babyID;
-          res.reply('欢迎你，系统已经帮你分配了一个新的身份，想马上开始加入一个darkroom吗？回复start随机加入，回复help查看游戏规则')
-        })
-      }
-    })
-  } else {
-    res.reply('我不太清楚你想表达的意思是什么，也许试试发一段文字给我？')
-  }
-})
+module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, next) {
+  
+  console.log(msg);
+  console.log(req.wxsession);
+
+  // 查询用户状态
+  user.query(msg.FromUserName,function(u){
+    if (u) {
+      // 此用户已经注册过一个了
+      // res.reply('欢迎回来，系统正在为你分配一个新的darkroom');
+      req.wxsession.uid = u._id;
+      res.wait('main');
+    } else {
+      // 开始新建用户
+      user.create({
+        FromUserName: msg.FromUserName
+      },function(babyID){
+        req.wxsession.uid = babyID;
+        res.reply('欢迎你，系统已经帮你分配了一个新的身份，想马上开始加入一个darkroom吗？回复start随机加入，回复help查看游戏规则')
+      })
+    }
+  })
+  // res.reply('我不太清楚你想表达的意思是什么，也许试试发一段文字给我？')
+
+}))
