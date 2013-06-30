@@ -6,5 +6,6 @@ var wechat = require('wechat');
 
 module.exports = wechat('keyboardcat123', function (req, res, next) {
   var message = req.weixin;
-  console.log(message);
+  // console.log(message);
+  res.reply('hello two!!')
 })
