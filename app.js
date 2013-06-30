@@ -5,7 +5,9 @@
 // \__,_/\__,_/_/  /_/|_/_/   \____/\____/_/ /_/ /_/                                                     
 // 
 // @author: [turingou]
-// @created: date
+// @created: 2013-06-30
+// @brief: darkroom the game
+// @url: http://darkroom.im
 
 var express = require('express')
   , http = require('http')
@@ -13,7 +15,6 @@ var express = require('express')
 
 var app = express();
 
-// all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');

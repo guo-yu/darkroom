@@ -3,7 +3,9 @@ var model = require('../models'),
     room = model.room;
 
 // 创建房间
-exports.create = function(baby,cb) {
+exports.create = function(baby,master,cb) {
+  baby.user = [];
+  baby.user.push(master._id);
   var baby = new room(baby);
   baby.save(function(err){
     if (!err) {
@@ -18,6 +20,17 @@ exports.remove = function(id,cb) {
   room.findByIdAndRemove(id,function(err){
     cb(id)
   });
+}
+
+// 查询最新的房号
+exports.last = function(cb) {
+  room.findOne({}).sort('-createBy').exec(function(err,r){
+    if (!err) {
+      cb(r);
+    } else {
+      console.log(err)
+    }
+  })
 }
 
 // 通过公开的房间号码查询房间信息
@@ -72,7 +85,7 @@ exports.join = function(userID,roomID,cb) {
             r.user.push(userID);
             r.save(function(err){
               if(!err) {
-                cb()
+                cb(r)
               } else {
                 console.log(err)
               }

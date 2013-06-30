@@ -2,9 +2,10 @@ var wechat = require('wechat'),
     List = wechat.List,
     user = require('../ctrler/user'),
     room = require('../ctrler/room'),
-    mail = require('../ctrler/mail');
+    mail = require('../lib/mail'),
+    async = require('async');
 
-exports.feedback = function(msg,user) {
+exports.feedback = function(msg,user,req,res) {
   if (msg.Content != '') {
     var mailcontent = [
       '反馈内容：',
@@ -20,12 +21,87 @@ exports.feedback = function(msg,user) {
     ].join("\n");
     mail.send(mailcontent,function(stat){
       if (stat != 'error') {
+        req.wxsession.step = null;
         res.reply('提交成功！感谢您的建议。')
       } else {
+        req.wxsession.step = null;
         res.reply('抱歉，反馈提交失败，要不您先备份一下呗，服务器可能是挂了，杯具。')
       }
     })
   }
+}
+
+// 加入已经存在的房间
+exports.join = function(msg,user,req,res) {
+  var roomID = parseInt(msg.Content);
+  if (roomLimited != 'NaN') {
+    room.join(user._id,roomID,function(r){
+      if (r) {
+        if (r == 'exist') {
+          req.wxsession.step = null;
+          res.reply('hey，你已经在这个房间里咯');
+        } else if (r == 'full') {
+          req.wxsession.step = null;
+          res.reply('这个房间人已经满了，找其他的房间加入把，或者自己新创建一个房间也行。');
+        } else {
+          // 正常的加入房间流程
+          req.wxsession.step = 'game';
+          req.wxsession.game = { door : r._id , openid: r.openid};
+          res.reply('加入成功！可以开始游戏了')
+        }
+      } else {
+        req.wxsession.step = null;
+        res.reply('没有找到这个房间，看看是不是搞错门牌号了？');
+      }
+    })
+  } else {
+    res.reply('你的输入有误，请输入数字哦');
+  }
+}
+
+// 创建一个新的房间
+exports.createRoom = function(msg,user,req,res) {
+  var roomLimited = parseInt(msg.Content);
+  if (roomLimited != 'NaN') {
+
+    async.waterfall([
+      function(callback){
+
+          room.last(function(last){
+            if (last) {
+              callback(null, last.openid);
+            } else {
+              callback(null, 0);
+            }
+          });
+      },
+      function(last, callback){
+                
+          var door = last + 1;
+          // 创建新的游戏房间
+          room.create({
+            limited: roomLimited,
+            openid: door
+          },user,function(rid){
+            callback(null, rid , door);
+          })
+      },
+      function(rid, door, callback){
+          if (rid) {
+            req.wxsession.step = 'game';
+            req.wxsession.game = { door : rid , openid: door};
+            res.reply('房间创建成功，房间号码是' + door);
+          }
+      }
+    ]);
+
+  } else {
+    res.reply('你的输入有误，请输入数字哦');
+  }
+}
+
+exports.game = function(msg,user,req,res) {
+  res.reply('你现在已经在游戏里，你的门牌号是：' + req.wxsession.game.openid)
 }
 
 exports.main = function(msg,u) {

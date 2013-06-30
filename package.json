@@ -9,6 +9,8 @@
     "express": "3.3.1",
     "jade": "*",
     "less-middleware": "*",
-    "wechat" : "*"
+    "async": "*",
+    "wechat" : "*",
+    "nodemailer": "*"
   }
 }

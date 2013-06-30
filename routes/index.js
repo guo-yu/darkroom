@@ -20,8 +20,10 @@ module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, n
       }
       // menu 路由
       if (req.wxsession.step) {
-        menu[req.wxsession.step](msg,u,res);
+        // 进入特殊路由
+        menu[req.wxsession.step](msg,u,req,res);
       } else {
+        // 进入常规路由：主操作界面
         menu.main(msg,u);
         res.wait('main');
       }
