@@ -1,14 +1,33 @@
 var nodemailer = require("nodemailer"),
-    config = require('../config');
+    config = require('../config-mime'),
+    sender = config.sys().feedback;
 
-exports.send = function() {
-  
-  var smtpTransport = nodemailer.createTransport("SMTP",{
-    service: "Gmail",
+exports.send = function(mailcontent,cb) {
+
+  var smtpTransport = nodemailer.createTransport("SMTP", {
+    host: sender.server,
+    port: sender.port,
+    use_authentication: sender.useAuth,
     auth: {
-        user: "gmail.user@gmail.com",
-        pass: "userpass"
+      user: sender.email,
+      pass: sender.password
     }
+  });
+
+  var mailOptions = {
+    from: sender.from,
+    to: sender.to,
+    subject: sender.title,
+    text: mailcontent
+  }
+
+  smtpTransport.sendMail(mailOptions, function(error, response) {
+    if(error) {
+      cb('error');
+    } else {
+      cb(response);
+    }
+    smtpTransport.close();
   });
 
 }

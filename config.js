@@ -1,13 +1,15 @@
 // get pkg info
 var fs = require('fs');
 var _config = {
-  mail: {
+  feedback: {
     server: 'smtp.qq.com',
     port: 25,
     useAuth: true,
     email: "",
     password: "",
-    from: 'sender <abc@sender.com>'
+    from: 'sender <abc@sender.com>',
+    to: '',
+    title: 'Darkroom 用户反馈'
   }
 }
 
