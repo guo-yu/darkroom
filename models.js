@@ -7,20 +7,33 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     db = mongoose.createConnection('localhost', 'darkroom');
 
-// 站点设置
+// 房间
 var roomModel = new mongoose.Schema({
   limited: Number,
+  open: {
+    type: Boolean,
+    default: true
+  },
+  openid: {
+    type: Number,
+    unique: true
+  },
   user: [{
     type: Schema.Types.ObjectId,
     ref: 'user'
   }]
 });
 
-// 分类与子分类
+// 用户
 var userModel = new mongoose.Schema({
   FromUserName: String,
   location: String,
   avatar: String,
+  score: Number,
+  rooms: [{
+    type: Schema.Types.ObjectId,
+    ref: 'room'
+  }],
   createdBy: {
     type: Date,
     default: new Date()
