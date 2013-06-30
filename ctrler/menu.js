@@ -1,10 +1,31 @@
 var wechat = require('wechat'),
     List = wechat.List,
     user = require('../ctrler/user'),
-    room = require('../ctrler/room');
+    room = require('../ctrler/room'),
+    mail = require('../ctrler/mail')
 
 exports.feedback = function(msg,user) {
-  
+  if (msg.Content != '') {
+    var mailcontent = [
+      '反馈内容',
+      msg.Content,
+      '',
+      '',
+      '该用户的混淆id',
+      msg.FromUserName,
+      '该用户的数据库id',
+      user._id,
+      '该用户的缩略信息',
+      JSON.stringify(user)
+    ].join("\n");
+    mail.send(mailcontent,function(stat){
+      if (stat != 'error') {
+        res.reply('提交成功！感谢您的建议。')
+      } else {
+        res.reply('抱歉，反馈提交失败，要不您先备份一下呗，服务器可能是挂了，杯具。')
+      }
+    })
+  }
 }
 
 exports.main = function() {
