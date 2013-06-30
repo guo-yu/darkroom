@@ -20,7 +20,7 @@ module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, n
       }
       // menu 路由
       if (req.wxsession.step) {
-        menu[req.wxsession.step]();
+        menu[req.wxsession.step](msg,u);
       } else {
         menu.main();
         res.wait('main');

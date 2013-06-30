@@ -3,7 +3,7 @@ var wechat = require('wechat'),
     user = require('../ctrler/user'),
     room = require('../ctrler/room');
 
-exports.feedback = function() {
+exports.feedback = function(msg,user) {
   
 }
 

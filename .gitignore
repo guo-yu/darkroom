@@ -1,2 +1,3 @@
+config.j*
 node_modules
 *.sublime*
