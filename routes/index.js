@@ -22,7 +22,7 @@ module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, n
       if (req.wxsession.step) {
         menu[req.wxsession.step](msg,u,res);
       } else {
-        menu.main();
+        menu.main(msg,u);
         res.wait('main');
       }
     } else {

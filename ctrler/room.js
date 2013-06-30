@@ -37,6 +37,27 @@ exports.query = function(openid,cb) {
   })
 }
 
+// 查询当前总服务器的房间状况
+exports.stat = function(open,cb) {
+  if (typeof(open) == 'boolean') {
+    room.count({
+      open: open
+    },function(err,count){
+      if (!err) {
+        cb(count)
+      } else {
+        console.log(err)
+      }
+    })
+  } else {
+    room.count({},function(err,count){
+      if (!err) {
+        cb(count)
+      }
+    })
+  }
+}
+
 // 加入房间
 exports.join = function(userID,roomID,cb) {
     exports.query(roomID,function(r){

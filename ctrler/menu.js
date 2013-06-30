@@ -2,20 +2,20 @@ var wechat = require('wechat'),
     List = wechat.List,
     user = require('../ctrler/user'),
     room = require('../ctrler/room'),
-    mail = require('../ctrler/mail')
+    mail = require('../ctrler/mail');
 
 exports.feedback = function(msg,user) {
   if (msg.Content != '') {
     var mailcontent = [
-      '反馈内容',
+      '反馈内容：',
       msg.Content,
       '',
       '',
-      '该用户的混淆id',
+      '该用户的混淆id：',
       msg.FromUserName,
-      '该用户的数据库id',
+      '该用户的数据库id：',
       user._id,
-      '该用户的缩略信息',
+      '该用户的缩略信息：',
       JSON.stringify(user)
     ].join("\n");
     mail.send(mailcontent,function(stat){
@@ -28,15 +28,17 @@ exports.feedback = function(msg,user) {
   }
 }
 
-exports.main = function() {
+exports.main = function(msg,u) {
   List.add('main',[
     ['回复{开始} :选择新的房间',function (info, req, res) {
       // 进行一些分配操作
-      res.reply('请输入房间号，以『@』号开头，如 @1024 表示加入1024号房间')
+      req.wxsession.step = 'join';
+      res.reply('请输入房间号，如 1024 表示加入1024号房间');
     }],
     ['回复{新建} :新建一个房间，和好友一起玩',function (info, req, res) {
       // 新建一个房间
-      res.reply('请输入最大人数，以『#』号开头，如 #10 表示最大允许10人同时参加')
+      req.wxsession.step = 'createRoom';
+      res.reply('请输入最大人数，如 10 表示最大允许10人同时参加');
     }],
     ['回复{帮助} :查看游戏帮助',function (info, req , res) {
       res.reply([
@@ -60,18 +62,21 @@ exports.main = function() {
     }],
     ['回复{成就} :查看我所获得的积分',function (info, req,res){
       // 查询积分
-      res.reply('你的积分是10000分');
+      res.reply('你现在的积分是' + u.score + '分');
     }],
-    ['回复{在线} :查看游戏服务器在线人数',function (info, req,res){
-      // 查询积分
-      res.reply([
+    ['回复{在线} :查看darkroom世界里在进行游戏的房间数',function (info, req,res){
+      // 查询总房间人数
+      room.stat('all',function(count){
+        res.reply([
           '服务器状态：正常',
-          '在线人数：10028262'
+          '在线房间：' + count + '个'
         ].join('\n'));
+      });
     }],
     ['回复{反馈} :提交你对darkroom的想法',function (info, req,res){
       // 提交反馈
       // 这里要考虑一个情况，就是用户怎么从一开始的路由里进入这个反馈流程是一个问题
+      // 针对这个情况可以设置一个step路由拦截掉
       req.wxsession.step = 'feedback';
       res.reply('我正拿着笔准备记下呢，请说：')
     }]
