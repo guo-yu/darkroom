@@ -16,7 +16,6 @@ exports.create = function(baby,master,cb) {
 
 // 删除和回收房间
 exports.remove = function(id,cb) {
-  // 删除完这个用户之后，要联动删除在用户组里的记录才行
   room.findByIdAndRemove(id,function(err){
     cb(id)
   });
@@ -38,6 +37,21 @@ exports.query = function(openid,cb) {
   room.findOne({
     openid: openid
   }).exec(function(err,u){
+    if (!err) {
+      if (u) {
+        cb(u)
+      } else {
+        cb(null)
+      }
+    } else {
+      console.log(err)
+    }
+  })
+}
+
+// 通过公开的房间id查询
+exports.queryById = function(id,cb) {
+  room.findById(id).exec(function(err,u){
     if (!err) {
       if (u) {
         cb(u)

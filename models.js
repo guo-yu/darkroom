@@ -38,11 +38,24 @@ var userModel = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'room'
   }],
+  tools: [{
+    type: Schema.Types.ObjectId,
+    ref: 'tool'
+  }],
   createdBy: {
     type: Date,
     default: new Date()
   }
 });
 
+// 道具
+var toolModel = new mongoose.Schema({
+  name: String,
+  power: Number,
+  // 是否是关键道具
+  key: Boolean
+});
+
 exports.room = db.model('room', roomModel);
 exports.user = db.model('user', userModel);
+exports.tool = db.model('tool', toolModel);

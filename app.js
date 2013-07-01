@@ -7,6 +7,7 @@
 // @author: [turingou]
 // @created: 2013-06-30
 // @brief: darkroom the game
+// @github: https://github.com/turingou/darkroom
 // @url: http://darkroom.im
 // @app: http://darkroom.app.menkr.com
 

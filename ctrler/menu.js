@@ -34,7 +34,7 @@ exports.feedback = function(msg,user,req,res) {
 // 加入已经存在的房间
 exports.join = function(msg,user,req,res) {
   var roomID = parseInt(msg.Content);
-  if (roomLimited != 'NaN') {
+  if (isNaN(roomID) == false) {
     room.join(user._id,roomID,function(r){
       if (r) {
         if (r == 'exist') {
@@ -46,6 +46,7 @@ exports.join = function(msg,user,req,res) {
         } else {
           // 正常的加入房间流程
           req.wxsession.step = 'game';
+          req.wxsession.sc = 'home';
           req.wxsession.game = { door : r._id , openid: r.openid};
           res.reply('加入成功！可以开始游戏了')
         }
@@ -62,46 +63,49 @@ exports.join = function(msg,user,req,res) {
 // 创建一个新的房间
 exports.createRoom = function(msg,user,req,res) {
   var roomLimited = parseInt(msg.Content);
-  if (roomLimited != 'NaN') {
+  if (isNaN(roomLimited) == false) {
 
-    async.waterfall([
-      function(callback){
+    if (roomLimited > 100) {
+      res.reply('最多100人一起玩哦，请输入100以下的数字')
+    } else {
 
-          room.last(function(last){
-            if (last) {
-              callback(null, last.openid);
-            } else {
-              callback(null, 0);
+      async.waterfall([
+        function(callback){
+
+            room.last(function(last){
+              if (last) {
+                callback(null, last.openid);
+              } else {
+                callback(null, 0);
+              }
+            });
+        },
+        function(last, callback){
+                  
+            var door = last + 1;
+            // 创建新的游戏房间
+            room.create({
+              limited: roomLimited,
+              openid: door
+            },user,function(rid){
+              callback(null, rid , door);
+            })
+        },
+        function(rid, door, callback){
+            if (rid) {
+              req.wxsession.step = 'game';
+              req.wxsession.sc = 'home';
+              req.wxsession.game = { door : rid , openid: door};
+              res.reply('房间创建成功，房间号码是' + door);
             }
-          });
-      },
-      function(last, callback){
-                
-          var door = last + 1;
-          // 创建新的游戏房间
-          room.create({
-            limited: roomLimited,
-            openid: door
-          },user,function(rid){
-            callback(null, rid , door);
-          })
-      },
-      function(rid, door, callback){
-          if (rid) {
-            req.wxsession.step = 'game';
-            req.wxsession.game = { door : rid , openid: door};
-            res.reply('房间创建成功，房间号码是' + door);
-          }
-      }
-    ]);
+        }
+      ]);
+
+    }
 
   } else {
     res.reply('你的输入有误，请输入数字哦');
   }
-}
-
-exports.game = function(msg,user,req,res) {
-  res.reply('你现在已经在游戏里，你的门牌号是：' + req.wxsession.game.openid)
 }
 
 exports.main = function(msg,u) {

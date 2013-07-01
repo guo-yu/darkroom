@@ -1,7 +1,8 @@
 // ctrler user
 
 var model = require('../models'),
-    user = model.user;
+    user = model.user,
+    tool = model.tool;
 
 // 新建一个用户
 exports.create = function(baby,cb) {
@@ -44,5 +45,19 @@ exports.query = function(username,cb) {
     } else {
       console.log(err)
     }
+  })
+}
+
+// 用户拿到新的道具
+exports.addTool = function(username,toolid,cb) {
+  exports.query(username,function(u){
+    u.tools.push(toolid);
+    u.save(function(err){
+      if (!err) {
+        cb(toolid)
+      } else {
+        console.log(err)
+      }
+    })
   })
 }

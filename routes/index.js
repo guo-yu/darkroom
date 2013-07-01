@@ -1,9 +1,10 @@
 var wechat = require('wechat'),
     user = require('../ctrler/user'),
-    menu = require('../ctrler/menu');
+    menu = require('../ctrler/menu'),
+    gm = require('../ctrler/gm');
 
 /*
- * GET home page.
+ * Darkroom 主路由
  */
 
 module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, next) {
@@ -12,6 +13,7 @@ module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, n
   console.log(req.wxsession);
 
   // 查询用户状态
+  // 无论如何都要先做一次查询？
   user.query(msg.FromUserName,function(u){
     if (u) {
       // 此用户已经注册过一个了
@@ -20,14 +22,20 @@ module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, n
       }
       // menu 路由
       if (req.wxsession.step) {
-        // 进入特殊路由
-        menu[req.wxsession.step](msg,u,req,res);
+        if (req.wxsession.step == 'game') {
+          // 进入游戏场景路由
+          gm[req.wxsession.sc](msg,u,req,res);
+        } else {
+          // 进入特殊路由
+          menu[req.wxsession.step](msg,u,req,res);
+        }
       } else {
         // 进入常规路由：主操作界面
         menu.main(msg,u);
         res.wait('main');
       }
     } else {
+      // 第一次访问
       // 开始新建用户
       user.create({
         FromUserName: msg.FromUserName
