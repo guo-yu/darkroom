@@ -1,7 +1,4 @@
-Darkroom based on wechat
-======
-
-![darkroom](http://fc09.deviantart.net/fs4/i/2004/228/2/3/Little_lamp_in_dark_room.jpg)
+![darkroom](http://ww4.sinaimg.cn/large/61ff0de3gw1e67hk7wgh7j20m80800tr.jpg)
 
 基于微信公众平台的darkroom text adventure 游戏，改成了多人版。
 
