@@ -48,5 +48,4 @@ module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, n
     }
   })
   // res.reply('我不太清楚你想表达的意思是什么，也许试试发一段文字给我？')
-
 }))
