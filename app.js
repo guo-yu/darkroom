@@ -21,6 +21,10 @@
 // - model 数据模型
 // - ctrler 各个数据模型的控制器
 
+// 主要设计思路
+// 通过wxsession管理会话进度，在每个会话的入口根据进度标识挂载相应对话。不同的对话会影响标识。
+// 持久化session可以在短期内保持游戏状态。
+
 var express = require('express')
   , http = require('http')
   , path = require('path');
