@@ -9,8 +9,10 @@ var wechat = require('wechat'),
 
 module.exports = wechat('keyboardcat123', wechat.text(function (msg, req, res, next) {
   
-  console.log(msg);
-  console.log(req.wxsession);
+  // console.log(msg);
+  // console.log(req.wxsession);
+  console.log('<!-- !!STEP!! -->');
+  console.log(req.wxsession.step);
 
   // 查询用户状态
   // 无论如何都要先做一次查询？

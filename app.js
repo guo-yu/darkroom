@@ -13,6 +13,14 @@
 // @url: http://darkroom.im
 // @app: http://darkroom.app.menkr.com
 
+// Darkroom 的代码组织主要如下：
+// - index.js 主路由文件
+// - menu 菜单路由
+// - gm 游戏主控
+// - scence 游戏场景，包括会话和工作等
+// - model 数据模型
+// - ctrler 各个数据模型的控制器
+
 var express = require('express')
   , http = require('http')
   , path = require('path');

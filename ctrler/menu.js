@@ -31,7 +31,7 @@ exports.feedback = function(msg,user,req,res) {
   }
 }
 
-// 加入已经存在的房间
+// 加入已经存在的房间，对于已经加入了房间的人来说，回到他的游戏里
 exports.join = function(msg,user,req,res) {
   var roomID = parseInt(msg.Content);
   if (isNaN(roomID) == false) {
@@ -55,6 +55,12 @@ exports.join = function(msg,user,req,res) {
         res.reply('没有找到这个房间，看看是不是搞错门牌号了？');
       }
     })
+  } else if (roomID == 'back') {
+    // 这里如何记录上一步中他的状态？
+    // 这里要进行用户所属房间的一个查询，这个房间数值可能是多个
+    req.wxsession.step == 'game';
+    req.wxsession.sc = 'home';
+    res.reply('欢迎回来')
   } else {
     res.reply('你的输入有误，请输入数字哦');
   }
@@ -71,7 +77,7 @@ exports.createRoom = function(msg,user,req,res) {
 
       async.waterfall([
         function(callback){
-
+            console.log('2')
             room.last(function(last){
               if (last) {
                 callback(null, last.openid);
@@ -81,7 +87,6 @@ exports.createRoom = function(msg,user,req,res) {
             });
         },
         function(last, callback){
-                  
             var door = last + 1;
             // 创建新的游戏房间
             room.create({
@@ -110,10 +115,10 @@ exports.createRoom = function(msg,user,req,res) {
 
 exports.main = function(msg,u) {
   List.add('main',[
-    ['回复{开始} :选择新的房间',function (info, req, res) {
+    ['回复{开始} :选择新的房间或者回到游戏',function (info, req, res) {
       // 进行一些分配操作
       req.wxsession.step = 'join';
-      res.reply('请输入房间号，如 1024 表示加入1024号房间');
+      res.reply('请输入房间号，如 1024 表示加入1024号房间，如果想要回到上次断开的游戏，请回复back');
     }],
     ['回复{新建} :新建一个房间，和好友一起玩',function (info, req, res) {
       // 新建一个房间

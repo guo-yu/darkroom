@@ -10,6 +10,8 @@ exports.create = function(baby,master,cb) {
   baby.save(function(err){
     if (!err) {
       cb(baby._id);
+    } else {
+      console.log(err);
     }
   });
 }
@@ -86,6 +88,7 @@ exports.stat = function(open,cb) {
 }
 
 // 加入房间
+// todo: 这里写完后也应该联动在用户的数据表里存上他加入的房间。
 exports.join = function(userID,roomID,cb) {
     exports.query(roomID,function(r){
       if (r) {
