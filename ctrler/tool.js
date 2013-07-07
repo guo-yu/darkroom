@@ -29,3 +29,33 @@ exports.remove = function(id) {
     cb(id)
   });
 }
+
+// 根据顺序返回一个道具的细节
+exports.query = function(index,cb) {
+  tool.findOne({}).skip(index - 1).exec(function(err,t){
+    if (!err) {
+      cb(t)
+    } else {
+      console.log(err)
+    }
+  })
+}
+
+// 随机选择一个道具
+exports.gen = function(cb) {
+  tool.count({},function(err,count){
+    if (!err) {
+      if (count != 0) {
+        var n = Math.random()*count;
+        n = parseInt(n);
+        exports.query(n,function(t){
+          cb(t);
+        })
+      } else {
+        cb(null)
+      }
+    } else {
+      console.log(err);
+    }
+  });
+}

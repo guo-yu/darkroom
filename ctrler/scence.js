@@ -12,6 +12,7 @@ exports.home = function(msg,user,res) {
   var pb = '伸手不见五指的房间里,似乎只有你一个人,除了自己的喘息声,没有丝毫的动静,压迫感慢慢袭来,不知如何逃脱,,你可以：';
   var menu = [
     ['屏住呼吸({a})',function(info, req, res){
+      // 按照这个方法随机选取一个道具，添加到用户的道具中，并进入下一个场景。
       res.reply('1')
     }],
     ['大声呼喊({b})',function(info, req, res){
