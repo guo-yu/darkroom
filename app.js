@@ -25,9 +25,9 @@
 // 通过wxsession管理会话进度，在每个会话的入口根据进度标识挂载相应对话。不同的对话会影响标识。
 // 持久化session可以在短期内保持游戏状态。
 
-var express = require('express')
-  , http = require('http')
-  , path = require('path');
+var express = require('express'),
+  http = require('http'),
+  path = require('path');
 
 var app = express();
 
@@ -41,7 +41,9 @@ app.use(express.methodOverride());
 app.use(express.cookieParser('darkroom'));
 app.use(express.session());
 app.use(app.router);
-app.use(require('less-middleware')({ src: __dirname + '/public' }));
+app.use(require('less-middleware')({
+  src: __dirname + '/public'
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
